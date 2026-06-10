@@ -19,23 +19,23 @@ body{
     justify-content:center;
     align-items:center;
     padding:20px;
+    overflow:hidden;
 
-    background: conic-gradient(
-        from 45deg,
-        #2563eb 0deg 90deg,
-        #ef4444 90deg 180deg,
-        #22c55e 180deg 270deg,
-        #facc15 270deg 360deg
-    );
+    background:
+        radial-gradient(circle at 15% 20%, #2563eb 0%, transparent 35%),
+        radial-gradient(circle at 85% 20%, #ef4444 0%, transparent 35%),
+        radial-gradient(circle at 15% 80%, #22c55e 0%, transparent 35%),
+        radial-gradient(circle at 85% 80%, #facc15 0%, transparent 35%),
+        #0f172a;
 }
 
 .card{
     background:white;
     width:100%;
-    max-width:420px;
+    max-width:450px;
     padding:30px;
     border-radius:24px;
-    box-shadow:0 20px 50px rgba(0,0,0,.2);
+    box-shadow:0 20px 50px rgba(0,0,0,.3);
 }
 
 h1{
@@ -49,6 +49,12 @@ h1{
     color:#64748b;
     margin-bottom:25px;
     font-size:14px;
+}
+
+.equipes{
+    text-align:center;
+    font-size:22px;
+    margin-bottom:20px;
 }
 
 label{
@@ -84,7 +90,6 @@ button{
     font-size:17px;
     font-weight:bold;
     cursor:pointer;
-    transition:.2s;
 }
 
 button:hover{
@@ -98,7 +103,7 @@ button:hover{
 }
 
 .pontos{
-    font-size:48px;
+    font-size:52px;
     font-weight:800;
     color:#2563eb;
 }
@@ -109,10 +114,10 @@ button:hover{
 }
 
 .percentual{
-    margin-top:10px;
-    font-size:18px;
+    margin-top:15px;
+    font-size:17px;
     color:#0f172a;
-    font-weight:600;
+    line-height:1.8;
 }
 
 .info{
@@ -123,6 +128,14 @@ button:hover{
     font-size:13px;
     color:#475569;
 }
+
+.detalhes{
+    margin-top:15px;
+    background:#f1f5f9;
+    padding:12px;
+    border-radius:12px;
+    text-align:left;
+}
 </style>
 </head>
 <body>
@@ -130,15 +143,23 @@ button:hover{
 <div class="card">
 
     <h1>📊 Assiduidade</h1>
+
     <div class="subtitulo">
-        Calculadora proporcional e justa para equipes
+        Calculadora proporcional para gincanas
+    </div>
+
+    <div class="equipes">
+        🔵 🟡 🟢 🔴
     </div>
 
     <label>Total de membros da equipe</label>
-    <input type="number" id="total" placeholder="Ex: 27">
+    <input type="number" id="total" placeholder="Ex: 30">
 
     <label>Presentes na atividade</label>
-    <input type="number" id="presentes" placeholder="Ex: 22">
+    <input type="number" id="presentes" placeholder="Ex: 24">
+
+    <label>Visitantes levados pela equipe</label>
+    <input type="number" id="visitantes" value="0" min="0">
 
     <label>Pontuação máxima da atividade</label>
     <input type="number" id="maximo" value="100">
@@ -158,15 +179,20 @@ button:hover{
         </div>
 
         <div class="percentual" id="percentual">
-            0%
+        </div>
+
+        <div class="detalhes" id="detalhes">
         </div>
 
     </div>
 
     <div class="info">
-        Fórmula utilizada:<br>
-        <strong>(Presentes ÷ Total de membros) × Pontuação Máxima</strong><br><br>
-        O cálculo é proporcional ao tamanho da equipe, sem favorecer equipes maiores ou menores.
+        <strong>Regras:</strong><br><br>
+
+        ✔ Assiduidade proporcional ao tamanho da equipe<br>
+        ✔ Resultado sem casas decimais<br>
+        ✔ Cada visitante vale +30 pontos<br>
+        ✔ Não favorece equipes maiores ou menores
     </div>
 
 </div>
@@ -177,6 +203,7 @@ function calcular(){
 
     let total = Number(document.getElementById('total').value);
     let presentes = Number(document.getElementById('presentes').value);
+    let visitantes = Number(document.getElementById('visitantes').value);
     let maximo = Number(document.getElementById('maximo').value);
 
     if(total <= 0){
@@ -189,14 +216,38 @@ function calcular(){
         return;
     }
 
-    let percentual = (presentes / total) * 100;
-    let pontos = Math.round((presentes / total) * maximo);
+    if(visitantes < 0){
+        alert("Quantidade de visitantes inválida.");
+        return;
+    }
 
-    document.getElementById('pontos').innerText = pontos;
-    document.getElementById('percentual').innerText =
+    let percentual = (presentes / total) * 100;
+
+    let pontosAssiduidade = Math.round(
+        (presentes / total) * maximo
+    );
+
+    let pontosVisitantes = visitantes * 30;
+
+    let pontuacaoFinal =
+        pontosAssiduidade + pontosVisitantes;
+
+    document.getElementById('pontos').innerText =
+        pontuacaoFinal;
+
+    document.getElementById('percentual').innerHTML =
         percentual.toFixed(1) + "% de presença";
 
-    document.getElementById('resultado').style.display = "block";
+    document.getElementById('detalhes').innerHTML =
+        `
+        👥 Assiduidade: <strong>${pontosAssiduidade} pts</strong><br>
+        🎟️ Visitantes: <strong>${visitantes}</strong><br>
+        ⭐ Bônus visitantes: <strong>${pontosVisitantes} pts</strong><br>
+        🏆 Total final: <strong>${pontuacaoFinal} pts</strong>
+        `;
+
+    document.getElementById('resultado').style.display =
+        "block";
 }
 
 </script>
