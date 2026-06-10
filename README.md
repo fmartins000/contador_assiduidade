@@ -1,5 +1,5 @@
-# contador_assiduidade
 📊 Calculadora de Assiduidade para Gincanas
+
 
 Uma calculadora simples, bonita e justa para contabilizar a presença das equipes em atividades de gincanas, eventos, treinamentos ou competições.
 
